@@ -1,13 +1,27 @@
-'use strict';
+/*Needed to work properly:
+Function to move to question and answer section by click on Start. - Done
+Function to show each question and answers/include submit answer button - Probably an HTML form -Done
+Function that shows if they are right or wrong and if wrong what the answer is - used after clicking submit button - might need to be two functions -Done
+Function that moves to next question after right or wrong page -Done
+Function that tallys correct answers - something like correctAnswer++ - Done
+Function that counts the questons? - Done
+Function that shows the results at the end:  Example: Score 7/10  -Done
+Show real time stats - Current score and current queston ----???? Still haven't figured out
+
+// Gif to use on right answer - https://media0.giphy.com/media/1xdHOCA9erNVCnZ1qE/giphy.gif?
+
+// Gif to use on wrong answer - https://i.pinimg.com/originals/2e/71/63/2e7163f75ed5dc9f568cb31bb4073da4.gif
+
+*/
 
 let questionNumber = 1;
 
-let score = 0;
+let correctNumber = 0;
 
 const questionsAndAnswers = [
   {
     number: 1,
-    question: "What are the words of House Martell?",
+    text: "What are the words of House Martell?",
     answer1: "We Stand Together",
     answer2: "Unbowed, Unbent, Unbroken",
     answer3: "Growing Strong",
@@ -15,7 +29,7 @@ const questionsAndAnswers = [
   },
   {
     number: 2,
-    question: "What are the words of House Stark?",
+    text: "What are the words of House Stark?",
     answer1: "Ours is the Fury",
     answer2: "We Do Not Sow",
     answer3: "Winter is Coming",
@@ -23,7 +37,7 @@ const questionsAndAnswers = [
   },
   {
     number: 3,
-    question: "What are the words of House Baratheon?",
+    text: "What are the words of House Baratheon?",
     answer1: "Righteous in Wrath",
     answer2: "As High as Honor",
     answer3: "Fire and Blood",
@@ -31,7 +45,7 @@ const questionsAndAnswers = [
   },
   {
     number: 4,
-    question: "What are the words of House Lannister?",
+    text: "What are the words of House Lannister?",
     answer1: "A Lannister always pays his debts",
     answer2: "Hear Me Roar",
     answer3: "Family, Duty, Honor",
@@ -39,7 +53,7 @@ const questionsAndAnswers = [
   },
   {
     number: 5,
-    question: "What are the words of House Greyjoy?",
+    text: "What are the words of House Greyjoy?",
     answer1: "We Do Not Sow",
     answer2: "The Old, The True, The Brave",
     answer3: "Honed and Ready",
@@ -47,7 +61,7 @@ const questionsAndAnswers = [
   },
   {
     number: 6,
-    question: "What is the sigil of House Targaryen?",
+    text: "What is the sigil of House Targaryen?",
     answer1: "A three-headed dragon, black on red",
     answer2: "A three-headed dragon, red on black",
     answer3: "A golden lion on a crimson field",
@@ -55,7 +69,7 @@ const questionsAndAnswers = [
   },
   {
     number: 7,
-    question: "What is the sigil of House Greyjoy?",
+    text: "What is the sigil of House Greyjoy?",
     answer1: "A golden rose on a grass-green field",
     answer2: "A leaping trout, silver, on a field of rippling blue and red",
     answer3: "A red sun pierced by a golden spear",
@@ -63,15 +77,15 @@ const questionsAndAnswers = [
   },
   {
     number: 8,
-    quesiton: "What is the sigil of House Martell?",
+    text: "What is the sigil of House Martell?",
     answer1: "A red sun pierced by a golden spear",
     answer2: "A golden kraken upon a black field",
     answer3: "The moon-and-falcon, white, upon a sky blue field",
-    answer4: "A crowned stag, black, on a golden field	"
+    answer4: "A crowned stag, black, on a golden field"
   },
   {
     number: 9,
-    question: "What is the sigil of House Baratheon?",
+    text: "What is the sigil of House Baratheon?",
     answer1: "A three-headed dragon, red on black",
     answer2: "A grey direwolf on an ice-white field",
     answer3: "A crowned stag, black, on a golden field",
@@ -79,7 +93,7 @@ const questionsAndAnswers = [
   },
   {
     number: 10,
-    question: "What is the sigil of House Clegane?",
+    text: "What is the sigil of House Clegane?",
     answer1: "A shoal of silver fish upon a pale green field",
     answer2: "Three dogs in the yellow of autumn grass",
     answer3: "A fox head in a circle of flowers",
@@ -87,7 +101,7 @@ const questionsAndAnswers = [
   }
 ];
 
-const answers = [
+const rightAnswers = [
   "Unbowed, Unbent, Unbroken",
   "Winter is Coming",
   "Ours is the Fury",
@@ -100,66 +114,128 @@ const answers = [
   "Three dogs in the yellow of autumn grass"
 ];
 
-/*function startButton() {
-    $("#js-start-button").click(function(event) {
-        questionTemplate();
-    });
+function questionLayout(correctNumber, question, questionsDone) {
+  return `
+    <section role="main">
+    <h2 id="question">${question.text}</h2> 
+    <form>
+      <fieldset>
+        <label>
+          <input class="answer" type="radio" name="option" checked></input>
+          <div>${question.answer1}</div>
+        </label>
+        <label>
+          <input class="answer" type="radio" name="option"></input>
+          <div>${question.answer2}</div>
+        </label> 
+        <label>
+          <input class="answer" type="radio" name="option"></input>
+          <div>${question.answer3}</div>
+        </label>
+        <label>
+          <input class="answer" type="radio" name="option"></input>
+          <div>${question.answer4}</div>
+        </label>
+      </fieldset>  
+      <button id="submitButton">Submit</button>
+    </form>
+  </section>
+  `
+  ;
 }
-
-function next() {
-
-    const question = questionSet[questionNum - 1];
-  
-    const questionsAnswered = questionNum - 1;
-  
-    $('#container').html(questionTemplate());
-*/}
 
 function startQuiz() {
-    $().on('click', '#js-start-button', function(event) {
-        questionTemplate()
-    });
+  $('#startButton').click(function(event) {
+    nextQuestion();
+  });
 }
 
-function questionTemplate() {
-    return `
+function nextQuestion() {
+  const question = questionsAndAnswers[questionNumber - 1];
+  const questionsDone = questionNumber - 1;
+  $('#container').html(questionLayout(correctNumber, question, questionsDone));
+}
+
+function buttonForNextQuestion() {
+  $('#container').on('click', '#nextButton', function(event) {
+    if(questionNumber === 10) {
+      finalPage(correctNumber);
+    } else {
+      addOneMoveToNextQuestion();
+      nextQuestion();
+  }
+  });
+}
+
+function submitAnswer() {
+  $('#container').on('click', '#submitButton', function(event) {
+    event.preventDefault()
+    const answer = $('input:checked').siblings('div');
+    const rightAnswerPicked = checkIfCorrect(answer);
+    if(rightAnswerPicked) {
+      showRightAnswerPage();
+    } else {
+      showWrongAnswerPage();
+    }
+  });
+}
+
+function checkIfCorrect(answer) {
+  if(answer.text() === rightAnswers[questionNumber - 1]) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function showRightAnswerPage() {
+  $('#container').html(goodJob);
+  totalScore();
+}
+
+const goodJob = `
+  <section role="main">
+    <h2>Correct!</h2>
+    <button id="nextButton">Next</button>
+  </section>
+`
+;
+
+function showWrongAnswerPage() {
+  $('#container').html(wrongAnswer(questionNumber));
+}
+
+function totalScore() {
+  correctNumber++;
+}
+
+function wrongAnswer(questionNumber) {
+  return `
+    <section role="main">
+      <h2>Wrong! The correct answer was ${rightAnswers[questionNumber - 1]}!</h2>
+      <button id="nextButton">Next</button>
+    </section>
+`
+;
+}
+
+function addOneMoveToNextQuestion() {
+  questionNumber++;
+}
+
+function finalPage(correctNumber) {
+  $('#container').html(`
     <section>
-    <h1>${questionsAndAnswers.question}</h1>
-    <form>
-        <fieldset>
-            <label>
-                <input class="answer" type="radio" name="option"></input>
-                <span>${questionsAndAnswers.answer1}</span>
-            </label>
-            <label>
-                <input class="answer" type="radio" name="option"></input>
-                <span>${questionsAndAnswers.answer2}</span>
-            </label>
-            <label>
-                <input class="answer" type="radio" name="option"></input>
-                <span>${questionsAndAnswers.answer3}</span>
-            </label>
-            <label>
-                <input class="answer" type="radio" name="option"></input>
-                <span>${questionsAndAnswers.answer4}</span>
-            </label>
-        </fieldset>
-        <button id="submit">Submit</button>
-    </form>
-    `;
+      <h2>You got ${correctNumber} out of 10!</h2>
+      <button id="restartButton" value="Refresh Page" onClick="history.go(0)"> Try Again? </button>
+    </section>
+  `);
 }
 
-function runItAll() {
-    startButton();
+function pleaseWork() {
+  startQuiz();
+  submitAnswer();
+  buttonForNextQuestion();
 }
 
-runItAll();
-
-/*Needed:
-Function to move to question and answer section by click on Start. 
-Function to show each question and answers/include submit answer button - Probably an HTML form
-Function that shows if they are right or wrong and if wrong what the answer is - used after clicking submit button - might need to be two functions
-Function that moves to next question after right or wrong page
-Function that tallys correct answers - something like correctAnswer++
-Function that shows the results at the end:  Example: Score 7/10 
-*/
+pleaseWork();
