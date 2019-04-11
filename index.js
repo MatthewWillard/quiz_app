@@ -116,25 +116,25 @@ const rightAnswers = [
 
 function questionLayout(correctNumber, question, questionsDone) {
   return `
-    <section role="main">
+    <section id="questionSetUp" role="main">
     <h2 id="question">${question.text}</h2> 
     <form>
-      <fieldset>
+      <fieldset id="questionsApperance">
         <label>
           <input class="answer" type="radio" name="option" checked></input>
-          <div>${question.answer1}</div>
+          <span>${question.answer1}</span>
         </label>
         <label>
           <input class="answer" type="radio" name="option"></input>
-          <div>${question.answer2}</div>
+          <span>${question.answer2}</span>
         </label> 
         <label>
           <input class="answer" type="radio" name="option"></input>
-          <div>${question.answer3}</div>
+          <span>${question.answer3}</span>
         </label>
         <label>
           <input class="answer" type="radio" name="option"></input>
-          <div>${question.answer4}</div>
+          <span>${question.answer4}</span>
         </label>
       </fieldset>  
       <button id="submitButton">Submit</button>
@@ -170,7 +170,7 @@ function buttonForNextQuestion() {
 function submitAnswer() {
   $('#container').on('click', '#submitButton', function(event) {
     event.preventDefault()
-    const answer = $('input:checked').siblings('div');
+    const answer = $('input:checked').siblings('span');
     const rightAnswerPicked = checkIfCorrect(answer);
     if(rightAnswerPicked) {
       showRightAnswerPage();
